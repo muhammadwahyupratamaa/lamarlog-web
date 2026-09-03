@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { applicationListQuery, formatDate, statusMeta } from '../src/lib/applications.js';
+import { applicationFormValues, applicationListQuery, applicationPayload, formatDate, statusMeta, validateApplication } from '../src/lib/applications.js';
 
 test('all backend application statuses have a display badge', () => {
   assert.equal(Object.keys(statusMeta).length, 9);
@@ -13,4 +13,11 @@ test('date-only API values keep their calendar date in Indonesian formatting', (
 
 test('list query only sends supported API filters', () => {
   assert.equal(applicationListQuery({ page: 2, q: 'Apply Flow', status: 'INTERVIEW', followUp: 'today' }), 'page=2&q=Apply+Flow&status=INTERVIEW&followUp=today');
+});
+
+test('application form requires backend mandatory fields and serializes empty optionals as null', () => {
+  const values = applicationFormValues({ companyName: 'Acme', jobTitle: 'Engineer', appliedAt: '2026-09-03' });
+  assert.deepEqual(validateApplication(values), {});
+  assert.equal(applicationPayload(values).location, null);
+  assert.ok(validateApplication({ ...values, companyName: '' }).companyName);
 });

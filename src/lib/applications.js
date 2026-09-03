@@ -23,3 +23,28 @@ export function applicationListQuery({ page = 1, q, status, followUp }) {
   if (followUp) params.set('followUp', followUp);
   return params.toString();
 }
+
+const optionalFields = ['location', 'workType', 'source', 'applicationUrl', 'salaryRange', 'contactName', 'contactEmail', 'nextFollowUpAt', 'notes'];
+
+export function applicationFormValues(application = {}) {
+  return { companyName: '', jobTitle: '', appliedAt: '', ...Object.fromEntries(optionalFields.map((field) => [field, ''])), ...Object.fromEntries(Object.entries(application).filter(([key]) => key === 'companyName' || key === 'jobTitle' || key === 'appliedAt' || optionalFields.includes(key)).map(([key, value]) => [key, value || ''])) };
+}
+
+export function validateApplication(values) {
+  const errors = {};
+  if (!values.companyName.trim() || values.companyName.trim().length > 255) errors.companyName = 'Nama perusahaan wajib diisi (maks. 255 karakter).';
+  if (!values.jobTitle.trim() || values.jobTitle.trim().length > 255) errors.jobTitle = 'Posisi wajib diisi (maks. 255 karakter).';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(values.appliedAt)) errors.appliedAt = 'Tanggal melamar wajib diisi.';
+  ['location', 'source', 'salaryRange', 'contactName'].forEach((field) => { if (values[field].trim().length > 255) errors[field] = 'Maksimal 255 karakter.'; });
+  if (values.contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.contactEmail)) errors.contactEmail = 'Masukkan email yang valid.';
+  if (values.applicationUrl) { try { new URL(values.applicationUrl); } catch { errors.applicationUrl = 'Masukkan URL yang valid.'; } }
+  return errors;
+}
+
+export function applicationPayload(values) {
+  return Object.fromEntries(Object.entries(values).map(([key, value]) => [key, typeof value === 'string' ? value.trim() || null : value]));
+}
+
+export function formatDateTime(value) {
+  return new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
+}

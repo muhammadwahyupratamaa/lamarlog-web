@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import StatusBadge from '../components/StatusBadge';
 import { useAuth } from '../features/auth/AuthContext';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -9,6 +9,7 @@ import { listApplications } from '../services/applications';
 export default function ApplicationsPage() {
   usePageTitle('Applications');
   const { token } = useAuth();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const q = searchParams.get('q') || '';
   const status = statusMeta[searchParams.get('status')] ? searchParams.get('status') : '';
@@ -39,6 +40,7 @@ export default function ApplicationsPage() {
   const hasFilters = Boolean(q || status || followUp);
   return <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
     <div className="flex flex-wrap items-end justify-between gap-5"><div><p className="font-mono text-xs font-semibold uppercase tracking-[0.15em] text-signal">Job tracker</p><h1 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Applications</h1><p className="mt-2 text-slate-600">Cari dan pantau semua lamaran dalam satu daftar.</p></div><Link className="btn-primary" to="/applications/new">+ Tambah Lamaran</Link></div>
+    {location.state?.notice && <p role="status" className="mt-5 rounded-lg border border-green-200 bg-green-50 px-3 py-2.5 text-sm text-green-800">{location.state.notice}</p>}
     <section aria-label="Filter lamaran" className="mt-8 rounded-xl border border-line bg-white p-4 sm:p-5"><div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_13rem_13rem_auto]"><label><span className="form-label">Cari</span><input className="form-input" onChange={(event) => setQuery(event.target.value)} placeholder="Perusahaan atau posisi" type="search" value={query} /></label><label><span className="form-label">Status</span><select className="form-input" onChange={(event) => updateParams({ status: event.target.value })} value={status}><option value="">Semua status</option>{Object.entries(statusMeta).map(([value, [label]]) => <option key={value} value={value}>{label}</option>)}</select></label><label><span className="form-label">Follow-up</span><select className="form-input" onChange={(event) => updateParams({ followUp: event.target.value })} value={followUp}><option value="">Semua jadwal</option><option value="overdue">Terlambat</option><option value="today">Hari ini</option><option value="upcoming">Mendatang</option></select></label><div className="flex items-end">{hasFilters && <button className="min-h-11 text-sm font-semibold text-signal hover:underline" onClick={() => updateParams({ q: '', status: '', followUp: '' })}>Reset filter</button>}</div></div></section>
     {loading && <ListSkeleton />}
     {!loading && error && <section role="alert" className="mt-6 rounded-xl border border-red-200 bg-red-50 p-6"><p className="font-semibold text-red-800">Daftar lamaran belum dapat dimuat</p><p className="mt-1 text-sm text-red-700">{error}</p><button className="mt-4 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-red-800 shadow-sm ring-1 ring-red-200 hover:bg-red-100" onClick={load}>Coba lagi</button></section>}
