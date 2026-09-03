@@ -21,3 +21,7 @@ test('application form requires backend mandatory fields and serializes empty op
   assert.equal(applicationPayload(values).location, null);
   assert.ok(validateApplication({ ...values, companyName: '' }).companyName);
 });
+
+test('invalid backend dates degrade to a safe placeholder instead of crashing the UI', () => {
+  assert.equal(formatDate('not-a-date'), '—');
+});
