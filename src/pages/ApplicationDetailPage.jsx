@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import StatusBadge from '../components/StatusBadge';
 import { useAuth } from '../features/auth/AuthContext';
@@ -10,11 +10,13 @@ export default function ApplicationDetailPage() {
   const { id } = useParams();
   const { token } = useAuth(); const navigate = useNavigate();
   const [application, setApplication] = useState(null); const [history, setHistory] = useState([]); const [error, setError] = useState(null); const [loading, setLoading] = useState(true);
+  const requestVersion = useRef(0);
   const [nextStatus, setNextStatus] = useState(''); const [statusNote, setStatusNote] = useState(''); const [statusError, setStatusError] = useState(''); const [statusSaving, setStatusSaving] = useState(false);
   const [confirming, setConfirming] = useState(false); const [deleteError, setDeleteError] = useState(''); const [deleting, setDeleting] = useState(false);
   usePageTitle('Detail Lamaran');
-  const load = useCallback(async () => { setLoading(true); setError(null); try { const [nextApplication, nextHistory] = await Promise.all([getApplication(token, id), getApplicationHistory(token, id)]); setApplication(nextApplication); setHistory(nextHistory); setNextStatus(nextApplication.status); } catch (requestError) { setError(requestError); } finally { setLoading(false); } }, [token, id]);
+  const load = useCallback(async () => { const version = ++requestVersion.current; setLoading(true); setError(null); try { const [nextApplication, nextHistory] = await Promise.all([getApplication(token, id), getApplicationHistory(token, id)]); if (version === requestVersion.current) { setApplication(nextApplication); setHistory(nextHistory); setNextStatus(nextApplication.status); } } catch (requestError) { if (version === requestVersion.current) setError(requestError); } finally { if (version === requestVersion.current) setLoading(false); } }, [token, id]);
   useEffect(() => { load(); }, [load]);
+  useEffect(() => () => { requestVersion.current += 1; }, []);
   const saveStatus = async (event) => { event.preventDefault(); setStatusError(''); if (nextStatus === application.status) { setStatusError('Pilih status yang berbeda untuk memperbarui progres.'); return; } setStatusSaving(true); try { await updateApplicationStatus(token, id, { status: nextStatus, ...(statusNote.trim() ? { note: statusNote.trim() } : {}) }); setStatusNote(''); await load(); } catch (requestError) { setStatusError(requestError.message); } finally { setStatusSaving(false); } };
   const remove = async () => { setDeleting(true); setDeleteError(''); try { await deleteApplication(token, id); navigate('/applications', { replace: true, state: { notice: 'Lamaran berhasil dihapus.' } }); } catch (requestError) { setDeleteError(requestError.message); } finally { setDeleting(false); } };
   if (loading) return <DetailSkeleton />;

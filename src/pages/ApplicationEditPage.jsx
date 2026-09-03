@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ApplicationForm from '../features/applications/ApplicationForm';
 import { useAuth } from '../features/auth/AuthContext';
@@ -6,10 +6,11 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import { getApplication, updateApplication } from '../services/applications';
 
 export default function ApplicationEditPage() {
-  const { id } = useParams(); const { token } = useAuth(); const navigate = useNavigate(); const [application, setApplication] = useState(null); const [error, setError] = useState(''); const [submitting, setSubmitting] = useState(false);
+  const { id } = useParams(); const { token } = useAuth(); const navigate = useNavigate(); const [application, setApplication] = useState(null); const [error, setError] = useState(''); const [submitting, setSubmitting] = useState(false); const requestVersion = useRef(0);
   usePageTitle('Edit Lamaran');
-  const load = useCallback(async () => { setError(''); try { setApplication(await getApplication(token, id)); } catch (requestError) { setError(requestError.message); } }, [token, id]);
+  const load = useCallback(async () => { const version = ++requestVersion.current; setError(''); try { const response = await getApplication(token, id); if (version === requestVersion.current) setApplication(response); } catch (requestError) { if (version === requestVersion.current) setError(requestError.message); } }, [token, id]);
   useEffect(() => { load(); }, [load]);
+  useEffect(() => () => { requestVersion.current += 1; }, []);
   const submit = async (values) => { setSubmitting(true); try { await updateApplication(token, id, values); navigate(`/applications/${id}`, { replace: true }); } finally { setSubmitting(false); } };
   if (error) return <PageError message={error} retry={load} />;
   if (!application) return <FormSkeleton />;

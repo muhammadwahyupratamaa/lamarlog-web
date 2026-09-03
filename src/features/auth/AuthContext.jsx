@@ -1,16 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { api } from '../../services/api';
+import { readToken, removeToken, saveToken } from '../../lib/auth';
 
 const AuthContext = createContext(null);
-const storageKey = 'applyflow.token';
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem(storageKey));
+  const [token, setToken] = useState(() => readToken(localStorage));
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const clearSession = () => {
-    localStorage.removeItem(storageKey);
+    removeToken(localStorage);
     setToken(null);
     setUser(null);
   };
@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   const startSession = ({ token: nextToken, user: nextUser }) => {
-    localStorage.setItem(storageKey, nextToken);
+    saveToken(localStorage, nextToken);
     setToken(nextToken);
     setUser(nextUser);
   };

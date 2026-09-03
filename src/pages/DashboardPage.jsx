@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import StatusBadge from '../components/StatusBadge';
 import { useAuth } from '../features/auth/AuthContext';
@@ -12,12 +12,15 @@ export default function DashboardPage() {
   const [dashboard, setDashboard] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const requestVersion = useRef(0);
   const load = useCallback(async () => {
+    const version = ++requestVersion.current;
     setLoading(true); setError('');
-    try { setDashboard(await getDashboard(token)); } catch (requestError) { setError(requestError.message); } finally { setLoading(false); }
+    try { const result = await getDashboard(token); if (version === requestVersion.current) setDashboard(result); } catch (requestError) { if (version === requestVersion.current) setError(requestError.message); } finally { if (version === requestVersion.current) setLoading(false); }
   }, [token]);
 
   useEffect(() => { load(); }, [load]);
+  useEffect(() => () => { requestVersion.current += 1; }, []);
   return <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
     <div className="flex flex-wrap items-end justify-between gap-5"><div><p className="font-mono text-xs font-semibold uppercase tracking-[0.15em] text-signal">Overview</p><h1 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Selamat datang, {user?.name?.split(' ')[0] || 'kembali'}.</h1><p className="mt-2 text-slate-600">Lihat posisi setiap lamaran dan langkah yang perlu dilakukan.</p></div><Link className="btn-primary" to="/applications/new">+ Tambah Lamaran</Link></div>
     {loading && <DashboardSkeleton />}

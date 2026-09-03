@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import StatusBadge from '../components/StatusBadge';
 import { useAuth } from '../features/auth/AuthContext';
@@ -19,6 +19,7 @@ export default function ApplicationsPage() {
   const [result, setResult] = useState({ data: [], pagination: null });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const requestVersion = useRef(0);
   const updateParams = useCallback((changes, resetPage = true) => {
     const next = new URLSearchParams(searchParams);
     Object.entries(changes).forEach(([key, value]) => value ? next.set(key, value) : next.delete(key));
@@ -32,10 +33,12 @@ export default function ApplicationsPage() {
     return () => clearTimeout(timer);
   }, [q, query, updateParams]);
   const load = useCallback(async () => {
+    const version = ++requestVersion.current;
     setLoading(true); setError('');
-    try { setResult(await listApplications(token, { page, q, status, followUp })); } catch (requestError) { setError(requestError.message); } finally { setLoading(false); }
+    try { const response = await listApplications(token, { page, q, status, followUp }); if (version === requestVersion.current) setResult(response); } catch (requestError) { if (version === requestVersion.current) setError(requestError.message); } finally { if (version === requestVersion.current) setLoading(false); }
   }, [token, page, q, status, followUp]);
   useEffect(() => { load(); }, [load]);
+  useEffect(() => () => { requestVersion.current += 1; }, []);
 
   const hasFilters = Boolean(q || status || followUp);
   return <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
