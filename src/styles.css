@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { @apply border-line; }
+  body { @apply min-h-screen bg-mist font-sans text-ink antialiased; }
+  button, input { font: inherit; }
+  button:focus-visible, a:focus-visible, input:focus-visible { @apply outline-none ring-2 ring-signal ring-offset-2; }
+}
+
+@layer components {
+  .form-label { @apply mb-1.5 block text-sm font-medium text-slate-700; }
+  .form-input { @apply w-full rounded-lg border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-signal focus:outline-none focus:ring-2 focus:ring-signal/20; }
+  .btn-primary { @apply inline-flex min-h-11 items-center justify-center rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60; }
+  .nav-link { @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-ink; }
+  .nav-link-active { @apply bg-cyan-50 text-signal hover:bg-cyan-50 hover:text-signal; }
+}
