@@ -15,7 +15,7 @@ export default function AppShell() {
   const navigate = useNavigate();
   const onLogout = async () => { await logout(); navigate('/login', { replace: true }); };
 
-  return <div className="min-h-screen bg-mist lg:grid lg:grid-cols-[15.5rem_1fr]">
+  return <div className="min-h-screen bg-mist/95 lg:grid lg:grid-cols-[15.5rem_1fr]">
     <aside className="hidden min-h-screen border-r border-line bg-white p-5 lg:flex lg:flex-col">
       <span className="px-3 text-lg font-bold tracking-tight text-ink">Apply<span className="text-signal">Flow</span></span>
       <div className="mt-10"><p className="mb-3 px-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Workspace</p><Navigation /></div>

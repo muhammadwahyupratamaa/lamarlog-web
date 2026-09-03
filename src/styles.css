@@ -4,7 +4,7 @@
 
 @layer base {
   * { @apply border-line; }
-  body { @apply min-h-screen bg-mist font-sans text-ink antialiased; }
+  body { @apply min-h-screen bg-transparent font-sans text-ink antialiased; }
   button, input { font: inherit; }
   button:focus-visible, a:focus-visible, input:focus-visible { @apply outline-none ring-2 ring-signal ring-offset-2; }
 }

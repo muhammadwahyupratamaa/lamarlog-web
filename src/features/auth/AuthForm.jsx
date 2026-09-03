@@ -37,7 +37,7 @@ export default function AuthForm({ mode }) {
 
   return (
     <main className="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_34rem]">
-      <section className="hidden bg-ink p-12 text-white lg:flex lg:flex-col lg:justify-between">
+      <section className="hidden bg-ink/85 p-12 text-white lg:flex lg:flex-col lg:justify-between">
         <Link to="/login" className="text-lg font-bold tracking-tight">Apply<span className="text-cyan-300">Flow</span></Link>
         <div className="max-w-md">
           <p className="mb-5 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Job search, in focus</p>
