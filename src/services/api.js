@@ -8,6 +8,8 @@ export class ApiError extends Error {
   }
 }
 
+export const unauthorizedEvent = 'applyflow:unauthorized';
+
 export async function api(path, { token, headers, withMeta = false, baseUrl = configuredBaseUrl, ...options } = {}) {
   if (!baseUrl) throw new ApiError('Alamat API belum diatur. Tambahkan VITE_API_BASE_URL.', 0);
   let response;
@@ -21,7 +23,11 @@ export async function api(path, { token, headers, withMeta = false, baseUrl = co
   }
 
   const payload = response.status === 204 ? {} : await response.json().catch(() => ({}));
-  if (!response.ok) throw new ApiError(payload.error?.message || 'Terjadi kesalahan pada server.', response.status, payload.error?.details);
+  if (!response.ok) {
+    const error = new ApiError(payload.error?.message || 'Terjadi kesalahan pada server.', response.status, payload.error?.details);
+    if (response.status === 401 && typeof window !== 'undefined') window.dispatchEvent(new Event(unauthorizedEvent));
+    throw error;
+  }
   if (response.status === 204) return undefined;
   if (!Object.hasOwn(payload, 'data') || payload.data == null) throw new ApiError('Respons server tidak valid.', response.status);
   return withMeta ? payload : payload.data;

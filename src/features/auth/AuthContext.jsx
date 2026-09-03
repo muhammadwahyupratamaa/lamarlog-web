@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { api } from '../../services/api';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { api, unauthorizedEvent } from '../../services/api';
 import { readToken, removeToken, saveToken } from '../../lib/auth';
 
 const AuthContext = createContext(null);
@@ -9,16 +9,21 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const clearSession = () => {
+  const clearSession = useCallback(() => {
     removeToken(localStorage);
     setToken(null);
     setUser(null);
-  };
+  }, []);
 
   useEffect(() => {
     if (!token) { setLoading(false); return; }
     api('/auth/me', { token }).then(({ user: currentUser }) => setUser(currentUser)).catch(clearSession).finally(() => setLoading(false));
-  }, [token]);
+  }, [token, clearSession]);
+
+  useEffect(() => {
+    window.addEventListener(unauthorizedEvent, clearSession);
+    return () => window.removeEventListener(unauthorizedEvent, clearSession);
+  }, [clearSession]);
 
   const startSession = ({ token: nextToken, user: nextUser }) => {
     saveToken(localStorage, nextToken);

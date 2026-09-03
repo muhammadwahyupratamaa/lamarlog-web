@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ApiError, api } from '../src/services/api.js';
+import { ApiError, api, unauthorizedEvent } from '../src/services/api.js';
 
 test('api sends JSON and Bearer token, then returns data', async (t) => {
   const originalFetch = globalThis.fetch;
@@ -20,4 +20,15 @@ test('api turns backend and malformed responses into clear errors', async (t) =>
   await assert.rejects(api('/applications/missing', { baseUrl: 'https://api.example/api' }), (error) => error instanceof ApiError && error.status === 404 && error.message === 'Application not found');
   globalThis.fetch = async () => new Response(JSON.stringify({ ok: true }), { status: 200 });
   await assert.rejects(api('/applications', { baseUrl: 'https://api.example/api' }), /Respons server tidak valid/);
+});
+
+test('api emits a session-clear signal when a protected request returns 401', async (t) => {
+  const originalFetch = globalThis.fetch; const originalWindow = globalThis.window;
+  t.after(() => { globalThis.fetch = originalFetch; globalThis.window = originalWindow; });
+  const events = new EventTarget(); let received = false;
+  events.addEventListener(unauthorizedEvent, () => { received = true; });
+  globalThis.window = events;
+  globalThis.fetch = async () => new Response(JSON.stringify({ error: { message: 'Invalid or expired token' } }), { status: 401 });
+  await assert.rejects(api('/dashboard/summary', { baseUrl: 'https://api.example/api', token: 'expired' }), /Invalid or expired token/);
+  assert.equal(received, true);
 });
