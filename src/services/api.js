@@ -8,7 +8,7 @@ export class ApiError extends Error {
   }
 }
 
-export async function api(path, { token, headers, ...options } = {}) {
+export async function api(path, { token, headers, withMeta = false, ...options } = {}) {
   let response;
   try {
     response = await fetch(`${baseUrl}${path}`, {
@@ -21,5 +21,5 @@ export async function api(path, { token, headers, ...options } = {}) {
 
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) throw new ApiError(payload.error?.message || 'Terjadi kesalahan pada server.', response.status, payload.error?.details);
-  return payload.data;
+  return withMeta ? payload : payload.data;
 }
