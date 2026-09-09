@@ -17,7 +17,7 @@ cp .env.example .env
 Set the API base URL in `.env`:
 
 ```env
-VITE_API_BASE_URL=http://localhost:3000/api
+VITE_API_BASE_URL=https://applyflow-api-roan.vercel.app/api
 ```
 
 Run the app and checks:
@@ -35,7 +35,7 @@ npm run build
 3. Add this production environment variable:
 
 ```env
-VITE_API_BASE_URL=https://<api-domain>/api
+VITE_API_BASE_URL=https://applyflow-api-roan.vercel.app/api
 ```
 
 4. Deploy. `vercel.json` keeps React Router deep links working.

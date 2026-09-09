@@ -1,4 +1,4 @@
-const configuredBaseUrl = import.meta.env?.VITE_API_BASE_URL?.replace(/\/$/, '');
+export const apiBaseUrl = import.meta.env?.VITE_API_BASE_URL?.replace(/\/+$/, '');
 
 export class ApiError extends Error {
   constructor(message, status, details) {
@@ -10,11 +10,15 @@ export class ApiError extends Error {
 
 export const unauthorizedEvent = 'applyflow:unauthorized';
 
-export async function api(path, { token, headers, withMeta = false, baseUrl = configuredBaseUrl, ...options } = {}) {
+export function apiUrl(path, baseUrl = apiBaseUrl) {
   if (!baseUrl) throw new ApiError('Alamat API belum diatur. Tambahkan VITE_API_BASE_URL.', 0);
+  return `${baseUrl.replace(/\/+$/, '')}/${String(path).replace(/^\/+/, '')}`;
+}
+
+export async function api(path, { token, headers, withMeta = false, baseUrl = apiBaseUrl, ...options } = {}) {
   let response;
   try {
-    response = await fetch(`${baseUrl}${path}`, {
+    response = await fetch(apiUrl(path, baseUrl), {
       ...options,
       headers: { Accept: 'application/json', ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}), ...headers },
     });
@@ -25,7 +29,7 @@ export async function api(path, { token, headers, withMeta = false, baseUrl = co
   const payload = response.status === 204 ? {} : await response.json().catch(() => ({}));
   if (!response.ok) {
     const error = new ApiError(payload.error?.message || 'Terjadi kesalahan pada server.', response.status, payload.error?.details);
-    if (response.status === 401 && typeof window !== 'undefined') window.dispatchEvent(new Event(unauthorizedEvent));
+    if (response.status === 401 && token && typeof window !== 'undefined') window.dispatchEvent(new Event(unauthorizedEvent));
     throw error;
   }
   if (response.status === 204) return undefined;
