@@ -1,11 +1,11 @@
-# ApplyFlow Web
+# LamarLog Web
 
-React, Vite, and Tailwind frontend for the private ApplyFlow job-application tracker.
+React, Vite, and Tailwind frontend for the private LamarLog job-application tracker.
 
 ## Prerequisites
 
 - Node.js 20+
-- ApplyFlow API running locally or deployed
+- API backend running locally or deployed
 
 ## Local setup
 
@@ -40,4 +40,4 @@ VITE_API_BASE_URL=https://applyflow-api-roan.vercel.app/api
 
 4. Deploy. `vercel.json` keeps React Router deep links working.
 
-Set the backend's `CORS_ORIGIN` to the deployed Vercel URL exactly, for example `https://<project>.vercel.app`.
+Set the backend's `CORS_ORIGIN` to `https://lamarlog.vercel.app`.

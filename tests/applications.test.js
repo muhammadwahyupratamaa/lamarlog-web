@@ -12,7 +12,7 @@ test('date-only API values keep their calendar date in Indonesian formatting', (
 });
 
 test('list query only sends supported API filters', () => {
-  assert.equal(applicationListQuery({ page: 2, q: 'Apply Flow', status: 'INTERVIEW', followUp: 'today' }), 'page=2&q=Apply+Flow&status=INTERVIEW&followUp=today');
+  assert.equal(applicationListQuery({ page: 2, q: 'LamarLog', status: 'INTERVIEW', followUp: 'today' }), 'page=2&q=LamarLog&status=INTERVIEW&followUp=today');
 });
 
 test('application form requires backend mandatory fields and serializes empty optionals as null', () => {

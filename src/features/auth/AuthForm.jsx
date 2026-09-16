@@ -38,7 +38,7 @@ export default function AuthForm({ mode }) {
   return (
     <main className="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_34rem]">
       <section className="hidden bg-ink/85 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <Link to="/login" className="text-lg font-bold tracking-tight">Apply<span className="text-cyan-300">Flow</span></Link>
+        <Link to="/login" className="text-lg font-bold tracking-tight">Lamar<span className="text-cyan-300">Log</span></Link>
         <div className="max-w-md">
           <p className="mb-5 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Job search, in focus</p>
           <h1 className="text-5xl font-semibold leading-[1.08] tracking-tight">Satu tempat tenang untuk setiap langkah pencarian kerja.</h1>
@@ -48,7 +48,7 @@ export default function AuthForm({ mode }) {
       </section>
       <section className="flex items-center justify-center bg-white px-5 py-10 sm:px-8">
         <div className="w-full max-w-md">
-          <Link to="/login" className="text-lg font-bold tracking-tight text-ink lg:hidden">Apply<span className="text-signal">Flow</span></Link>
+          <Link to="/login" className="text-lg font-bold tracking-tight text-ink lg:hidden">Lamar<span className="text-signal">Log</span></Link>
           <p className="mt-12 font-mono text-xs font-semibold uppercase tracking-[0.15em] text-signal">{register ? 'Buat akun' : 'Selamat datang kembali'}</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-ink">{title}</h2>
           <p className="mt-3 text-sm leading-6 text-slate-600">{register ? 'Buat akun untuk mulai mengatur setiap lamaran.' : 'Masuk untuk melihat perjalanan aplikasimu.'}</p>
@@ -58,7 +58,7 @@ export default function AuthForm({ mode }) {
             <Field label="Email" name="email" type="email" value={values.email} onChange={onChange} error={errors.email} autoComplete="email" />
             <Field label="Password" name="password" type="password" value={values.password} onChange={onChange} error={errors.password} autoComplete={register ? 'new-password' : 'current-password'} hint={register ? '8–72 karakter' : undefined} />
             {register && <Field label="Konfirmasi password" name="confirmPassword" type="password" value={values.confirmPassword} onChange={onChange} error={errors.confirmPassword} autoComplete="new-password" />}
-            <button className="btn-primary mt-2 w-full" disabled={submitting} type="submit">{submitting ? 'Memproses…' : register ? 'Buat akun' : 'Masuk ke ApplyFlow'}</button>
+            <button className="btn-primary mt-2 w-full" disabled={submitting} type="submit">{submitting ? 'Memproses…' : register ? 'Buat akun' : 'Masuk ke LamarLog'}</button>
           </form>
           <p className="mt-6 text-center text-sm text-slate-600">{register ? 'Sudah punya akun?' : 'Belum punya akun?'} <Link className="font-semibold text-signal hover:underline" to={register ? '/login' : '/register'}>{register ? 'Masuk' : 'Daftar sekarang'}</Link></p>
         </div>

@@ -17,7 +17,7 @@ export default function AppShell() {
 
   return <div className="min-h-screen bg-mist/95 lg:grid lg:grid-cols-[15.5rem_1fr]">
     <aside className="hidden min-h-screen border-r border-line bg-white p-5 lg:flex lg:flex-col">
-      <span className="px-3 text-lg font-bold tracking-tight text-ink">Apply<span className="text-signal">Flow</span></span>
+      <span className="px-3 text-lg font-bold tracking-tight text-ink">Lamar<span className="text-signal">Log</span></span>
       <div className="mt-10"><p className="mb-3 px-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Workspace</p><Navigation /></div>
       <div className="mt-auto rounded-xl border border-line bg-slate-50 p-3">
         <p className="truncate text-sm font-semibold text-ink">{user?.name}</p><p className="mt-0.5 truncate text-xs text-slate-500">{user?.email}</p>
@@ -25,7 +25,7 @@ export default function AppShell() {
       </div>
     </aside>
     <div className="pb-20 lg:pb-0">
-      <header className="flex h-16 items-center justify-between border-b border-line bg-white px-5 sm:px-8"><span className="text-lg font-bold tracking-tight text-ink lg:hidden">Apply<span className="text-signal">Flow</span></span><span className="hidden text-sm font-medium text-slate-500 lg:block">ApplyFlow</span><span className="max-w-[13rem] truncate text-sm text-slate-600">{user?.name}</span></header>
+      <header className="flex h-16 items-center justify-between border-b border-line bg-white px-5 sm:px-8"><span className="text-lg font-bold tracking-tight text-ink lg:hidden">Lamar<span className="text-signal">Log</span></span><span className="hidden text-sm font-medium text-slate-500 lg:block">LamarLog</span><span className="max-w-[13rem] truncate text-sm text-slate-600">{user?.name}</span></header>
       <Outlet />
     </div>
     <div className="fixed inset-x-0 bottom-0 border-t border-line bg-white px-3 py-2 lg:hidden"><Navigation mobile onLogout={onLogout} /></div>
